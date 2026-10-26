@@ -40,7 +40,7 @@ O endereço remoto do repositório não foi fornecido. Substitua o marcador abai
 pela URL real antes de clonar:
 
 ```powershell
-git clone [SUBSTITUIR_PELO_ENDERECO_DO_REPOSITORIO]
+git clone https://github.com/QuerenNalevaiko/teuestoque.git
 cd teuestoque
 ```
 
@@ -147,20 +147,20 @@ fornecidos e não foi confirmado neste documento.
 **Substitua este marcador pelo endereço HTTPS real publicado:**
 
 ```text
-[SUBSTITUIR_PELO_ENDERECO_REAL_DA_API_IA]
+https://api-ia-vert.vercel.app/
 ```
 
 O endpoint de produção deverá ser:
 
 ```text
-POST [SUBSTITUIR_PELO_ENDERECO_REAL_DA_API_IA]/perguntar
+POST https://api-ia-vert.vercel.app/perguntar
 Content-Type: application/json
 ```
 
 Exemplo de pedido com JSON válido, usando somente dados fictícios:
 
 ```http
-POST [SUBSTITUIR_PELO_ENDERECO_REAL_DA_API_IA]/perguntar
+POST https://api-ia-vert.vercel.app//perguntar
 Content-Type: application/json
 
 {
