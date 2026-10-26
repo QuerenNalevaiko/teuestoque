@@ -102,6 +102,7 @@ export default function App() {
     conteudo = (
       <TelaUsuarios
         token={token}
+        usuarioLogado={usuarioLogado}
         aoVoltar={() => setTela("principal")}
         aoEditar={abrirEdicao}
         aoExpirarSessao={aoExpirarSessao}
@@ -112,7 +113,9 @@ export default function App() {
       <TelaEditarUsuario
         token={token}
         usuario={usuarioEmEdicao}
+        usuarioLogado={usuarioLogado}
         aoVoltar={voltarParaUsuarios}
+        aoSair={aoSair}
         aoExpirarSessao={aoExpirarSessao}
       />
     );

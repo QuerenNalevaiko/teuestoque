@@ -6,6 +6,8 @@
 import React from 'react';
 import { ScrollView, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import ModuloEstoque from '../componentes/ModuloEstoque';
+import AssistenteEstoque from '../componentes/AssistenteEstoque';
+import { useState } from 'react';
 
 function nomeParaSaudacao(usuario) {
   if (!usuario) return 'usuário(a)';
@@ -14,6 +16,7 @@ function nomeParaSaudacao(usuario) {
 }
 
 export default function TelaPrincipal({ token, usuarioLogado, aoAbrirUsuarios, aoSair, aoExpirarSessao }) {
+  const [produtos, setProdutos] = useState([]);
   return (
     <ScrollView style={estilos.tela} contentContainerStyle={estilos.conteudo}>
       <View style={estilos.cartaoCabecalho}>
@@ -30,7 +33,12 @@ export default function TelaPrincipal({ token, usuarioLogado, aoAbrirUsuarios, a
         </View>
       </View>
 
-      <ModuloEstoque token={token} aoExpirarSessao={aoExpirarSessao} />
+      <ModuloEstoque
+        token={token}
+        aoExpirarSessao={aoExpirarSessao}
+        aoProdutosCarregados={setProdutos}
+      />
+      <AssistenteEstoque produtos={produtos} />
     </ScrollView>
   );
 }

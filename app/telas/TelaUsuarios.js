@@ -16,7 +16,13 @@ function nomeCompleto(usuario) {
   return nome || usuario?.usuario || 'Sem nome';
 }
 
-export default function TelaUsuarios({ token, aoVoltar, aoEditar, aoExpirarSessao }) {
+export default function TelaUsuarios({
+  token,
+  usuarioLogado,
+  aoVoltar,
+  aoEditar,
+  aoExpirarSessao,
+}) {
   const [usuarios, setUsuarios] = useState([]);
   const [carregando, setCarregando] = useState(false);
   const [mensagemErro, setMensagemErro] = useState('');
@@ -104,7 +110,10 @@ export default function TelaUsuarios({ token, aoVoltar, aoEditar, aoExpirarSessa
                   <Text style={estilos.idUsuario}>ID: {String(id)}</Text>
                 ) : null}
               </View>
-              <TouchableOpacity style={estilos.botaoEditar} onPress={() => aoEditar(usuario)}>
+              <TouchableOpacity
+                style={estilos.botaoEditar}
+                onPress={() => aoEditar(usuario)}
+              >
                 <Text style={estilos.textoBotaoEditar}>Editar</Text>
               </TouchableOpacity>
             </View>

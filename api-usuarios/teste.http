@@ -127,3 +127,37 @@ Authorization: Bearer {{login.response.body.dados.token}}
 ### ============================================================
 GET {{baseUrl}}
 Authorization: Bearer token.invalido.qualquer
+### ============================================================
+### 9) ESTOQUE (rotas protegidas)
+### Execute depois do login e use o token recebido.
+### ============================================================
+POST http://localhost:3000/api/produtos
+Authorization: Bearer {{login.response.body.$.dados.token}}
+Content-Type: application/json
+
+{
+  "nome": "Caderno de teste",
+  "quantidade": 5
+}
+
+### 9.a) LISTAR produtos
+GET http://localhost:3000/api/produtos
+Authorization: Bearer {{login.response.body.$.dados.token}}
+
+### 9.b) Registrar entrada
+POST http://localhost:3000/api/produtos/1/entrada
+Authorization: Bearer {{login.response.body.$.dados.token}}
+Content-Type: application/json
+
+{
+  "quantidade": 3
+}
+
+### 9.c) Registrar venda
+POST http://localhost:3000/api/produtos/1/venda
+Authorization: Bearer {{login.response.body.$.dados.token}}
+Content-Type: application/json
+
+{
+  "quantidade": 2
+}

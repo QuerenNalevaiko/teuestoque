@@ -49,3 +49,14 @@ CREATE TRIGGER trg_usuarios_data_alteracao
     BEFORE UPDATE ON usuarios
     FOR EACH ROW
     EXECUTE FUNCTION fn_usuarios_data_alteracao();
+
+-- 6) Produtos e saldo do estoque
+CREATE TABLE IF NOT EXISTS produtos (
+    id              SERIAL PRIMARY KEY,
+    nome            VARCHAR(150) NOT NULL,
+    quantidade      INTEGER NOT NULL DEFAULT 0 CHECK (quantidade >= 0),
+    data_criacao    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    data_alteracao  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_produtos_nome ON produtos (nome);

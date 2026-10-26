@@ -3,6 +3,7 @@ const cors = require("cors");
 require("dotenv").config();
 
 const usuarioRoutes = require("./src/routes/usuarioRoutes");
+const produtoRoutes = require("./src/routes/produtoRoutes");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -48,6 +49,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/usuarios", usuarioRoutes);
+app.use("/api/produtos", produtoRoutes);
 
 app.use((req, res) => {
   res.status(404).json({
@@ -64,10 +66,7 @@ app.use((err, req, res, next) => {
     sucesso: false,
     mensagem: "Erro interno do servidor",
     dados: null,
-    erro:
-      process.env.NODE_ENV === "development"
-        ? err.message
-        : "Por favor, tente novamente mais tarde.",
+    erro: "Por favor, tente novamente mais tarde.",
   });
 });
 

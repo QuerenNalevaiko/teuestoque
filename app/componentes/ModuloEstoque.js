@@ -35,7 +35,7 @@ function quantidadeDe(produto) {
   return Number.isFinite(numero) ? numero : 0;
 }
 
-export default function ModuloEstoque({ token, aoExpirarSessao }) {
+export default function ModuloEstoque({ token, aoExpirarSessao, aoProdutosCarregados }) {
   const [produtos, setProdutos] = useState([]);
   const [carregando, setCarregando] = useState(false);
 
@@ -67,10 +67,13 @@ export default function ModuloEstoque({ token, aoExpirarSessao }) {
       const lista = extrairDados(corpo);
       if (Array.isArray(lista)) {
         setProdutos(lista);
+        aoProdutosCarregados(lista);
       } else if (Array.isArray(lista && lista.produtos)) {
         setProdutos(lista.produtos);
+        aoProdutosCarregados(lista.produtos);
       } else {
         setProdutos([]);
+        aoProdutosCarregados([]);
       }
     } catch (erro) {
       if (erro && erro.sessaoExpirada) {
@@ -83,7 +86,7 @@ export default function ModuloEstoque({ token, aoExpirarSessao }) {
       setCarregando(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token]);
+  }, [token, aoProdutosCarregados]);
 
   // Carrega a lista real da API ao abrir o modulo.
   useEffect(() => {

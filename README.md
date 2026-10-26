@@ -22,6 +22,10 @@ O token fica somente na memória do estado do React. Ao sair, ao expirar a
 sessão ou ao recarregar/fechar o aplicativo, o token é apagado e é necessário
 fazer login novamente.
 
+Se o usuário excluir a própria conta enquanto está autenticado, o aplicativo
+também apaga o token e retorna automaticamente à tela de login. A exclusão de
+outro usuário mantém a sessão atual e retorna à lista de usuários.
+
 O assistente de IA não substitui as operações do aplicativo: ele apenas
 analisa os dados enviados na pergunta.
 
@@ -47,7 +51,7 @@ cd teuestoque
 No PowerShell, entre na pasta da API:
 
 ```powershell
-cd "C:\caminho\para\teuestoque\teu-estoque-api"
+cd "C:\caminho\para\teuestoque\api-usuarios"
 ```
 
 Crie o banco `app_usuarios` e a tabela `usuarios` executando o script:
@@ -56,13 +60,18 @@ Crie o banco `app_usuarios` e a tabela `usuarios` executando o script:
 psql -U postgres -f banco.sql
 ```
 
-O arquivo [banco.sql](./teu-estoque-api/banco.sql) cria o banco
+O arquivo [banco.sql](./api-usuarios/banco.sql) cria o banco
 `app_usuarios`, conecta-se a ele e cria a tabela `usuarios` com e-mail e
 usuário únicos.
 
-O diretório `teu-estoque-api` atualmente não contém um arquivo
-`.env.exemplo`. Crie um arquivo `.env` local com as variáveis abaixo e
-substitua os valores pelos dados da sua instalação:
+Copie o arquivo `.env.exemplo` para `.env` e substitua os valores pelos dados
+da sua instalação:
+
+```powershell
+Copy-Item .env.exemplo .env
+```
+
+O arquivo `.env.exemplo` contém estes nomes de variáveis:
 
 ```env
 PORT=3000
@@ -70,8 +79,8 @@ DB_HOST=localhost
 DB_PORT=5432
 DB_NAME=app_usuarios
 DB_USER=postgres
-DB_PASSWORD=SUA_SENHA_DO_POSTGRES
-JWT_SECRET=UMA_CHAVE_LONGA_E_ALEATORIA
+DB_PASSWORD=COLOQUE_A_SENHA_DO_POSTGRES
+JWT_SECRET=COLOQUE_UMA_CHAVE_LONGA_E_ALEATORIA
 NODE_ENV=development
 ```
 
@@ -84,6 +93,12 @@ npm start
 
 A API local fica em `http://localhost:3000`. A rota de saúde é
 `GET http://localhost:3000/saude`.
+
+As rotas protegidas de estoque ficam em `/api/produtos`: `GET` e `POST` na
+rota base, além de `POST /api/produtos/:id/entrada` e
+`POST /api/produtos/:id/venda`. Todas exigem `Authorization: Bearer <token>`.
+O banco impede saldo negativo e a venda acima do estoque disponível retorna
+erro HTTP `409`.
 
 Nunca publique o arquivo `.env`, a senha do PostgreSQL, o `JWT_SECRET`, senhas
 de usuários ou qualquer outra chave. O `.gitignore` da API já ignora `.env`.
@@ -104,6 +119,10 @@ Depois abra o endereço web mostrado pelo Expo, normalmente
 O aplicativo usa `http://localhost:3000` como URL local da API no arquivo
 [app/servicos/api.js](./app/servicos/api.js). Para executar o app em um celular
 com Expo Go, substitua essa URL pelo IP do computador na rede local.
+
+A URL da API de IA pode ser alterada com a variável Expo
+`EXPO_PUBLIC_API_IA_URL`. Sem essa variável, o app usa
+`http://localhost:3001` durante o desenvolvimento.
 
 ### api-ia
 
@@ -201,10 +220,10 @@ O assistente:
 Os arquivos relacionados à segurança e à integração são:
 
 - [app/App.js](./app/App.js): guarda o token JWT somente no estado em memória e
-  o apaga ao sair ou ao expirar a sessão;
+  o apaga ao sair, ao expirar a sessão ou ao excluir a própria conta;
 - [app/servicos/api.js](./app/servicos/api.js): envia o token nas requisições
   protegidas e não o grava em armazenamento persistente;
-- [teu-estoque-api/src/controllers/UsuarioController.js](./teu-estoque-api/src/controllers/UsuarioController.js):
+- [api-usuarios/src/controllers/UsuarioController.js](./api-usuarios/src/controllers/UsuarioController.js):
   usa `bcryptjs` para gerar o hash das senhas antes de salvá-las;
 - [api-ia/assistente-estoque.js](./api-ia/assistente-estoque.js): lê
   `GEMINI_API_KEY` e `GEMINI_MODELO` do ambiente;
@@ -213,7 +232,7 @@ Os arquivos relacionados à segurança e à integração são:
   assistente.
 
 Para executar os testes documentados da API de usuários, mantenha a API
-rodando e abra [teu-estoque-api/teste.http](./teu-estoque-api/teste.http) no
+rodando e abra [api-usuarios/teste.http](./api-usuarios/teste.http) no
 VS Code com uma extensão de cliente REST, como REST Client. Execute as
 requisições na ordem indicada no arquivo: saúde, cadastro, login, consultas
 protegidas, alteração e exclusão.
@@ -235,7 +254,7 @@ npx expo start --web
 O projeto está organizado nestas pastas:
 
 - [app/](./app/): aplicativo Expo/React Native e interface web;
-- [teu-estoque-api/](./teu-estoque-api/): API de usuários, autenticação JWT
+- [api-usuarios/](./api-usuarios/): API de usuários, autenticação JWT
   e acesso ao PostgreSQL;
 - [api-ia/](./api-ia/): API do assistente de análise de estoque integrada à
   Gemini API.
@@ -244,7 +263,7 @@ Os principais arquivos de execução são:
 
 - [app/App.js](./app/App.js): fluxo das telas e estado da sessão;
 - [app/servicos/api.js](./app/servicos/api.js): chamadas HTTP do aplicativo;
-- [teu-estoque-api/server.js](./teu-estoque-api/server.js): servidor da API de
+- [api-usuarios/server.js](./api-usuarios/server.js): servidor da API de
   usuários;
 - [api-ia/servidor.js](./api-ia/servidor.js): servidor da API de IA;
 - [api-ia/assistente-estoque.js](./api-ia/assistente-estoque.js): integração

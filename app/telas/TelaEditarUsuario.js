@@ -21,7 +21,27 @@ function idDe(usuario) {
   return usuario?.id ?? usuario?.idUsuario;
 }
 
-export default function TelaEditarUsuario({ token, usuario, aoVoltar, aoExpirarSessao }) {
+function saoOMesmoUsuario(primeiro, segundo) {
+  const primeiroId = idDe(primeiro);
+  const segundoId = idDe(segundo);
+  if (primeiroId !== undefined && segundoId !== undefined) {
+    return String(primeiroId) === String(segundoId);
+  }
+  return (
+    primeiro?.email &&
+    segundo?.email &&
+    String(primeiro.email).toLowerCase() === String(segundo.email).toLowerCase()
+  );
+}
+
+export default function TelaEditarUsuario({
+  token,
+  usuario,
+  usuarioLogado,
+  aoVoltar,
+  aoSair,
+  aoExpirarSessao,
+}) {
   const [nome, setNome] = useState('');
   const [sobrenome, setSobrenome] = useState('');
   const [email, setEmail] = useState('');
@@ -97,7 +117,11 @@ export default function TelaEditarUsuario({ token, usuario, aoVoltar, aoExpirarS
     try {
       await excluirUsuario(idDe(usuario), token);
       setConfirmandoExclusao(false);
-      aoVoltar(); // volta para a lista atualizada
+      if (saoOMesmoUsuario(usuario, usuarioLogado)) {
+        aoSair();
+      } else {
+        aoVoltar(); // volta para a lista atualizada
+      }
     } catch (erro) {
       setConfirmandoExclusao(false);
       if (erro && erro.sessaoExpirada) {

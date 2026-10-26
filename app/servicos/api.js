@@ -23,6 +23,7 @@
 //   por exemplo: http://192.168.0.15:3000
 // ------------------------------------------------------------
 export const URL_BASE = 'http://localhost:3000';
+export const URL_BASE_IA = process.env.EXPO_PUBLIC_API_IA_URL || 'http://localhost:3001';
 
 // ------------------------------------------------------------
 // Limite de "estoque baixo": produtos com quantidade MENOR que
@@ -194,6 +195,38 @@ export async function registrarEntrada(idProduto, quantidade, token) {
 // POST /api/produtos/:id/venda - corpo { quantidade }
 export async function registrarVenda(idProduto, quantidade, token) {
   return pedir(CAMINHOS_ESTOQUE.venda(idProduto), 'POST', { quantidade }, token, true);
+}
+
+export async function perguntarIA(pergunta, estoque) {
+  let resposta;
+  try {
+    resposta = await fetch(`${URL_BASE_IA}/perguntar`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pergunta, estoque }),
+    });
+  } catch (erro) {
+    throw criarErro(
+      `Não foi possível conectar à API de IA em ${URL_BASE_IA}.`,
+      0,
+      { semConexao: true },
+    );
+  }
+
+  let conteudo = null;
+  try {
+    conteudo = await resposta.json();
+  } catch (erro) {
+    conteudo = null;
+  }
+
+  if (!resposta.ok || (conteudo && conteudo.sucesso === false)) {
+    throw criarErro(
+      (conteudo && conteudo.mensagem) || `A API de IA respondeu com o status ${resposta.status}.`,
+      resposta.status,
+    );
+  }
+  return conteudo;
 }
 
 // Regra central do aviso de estoque baixo (usada pelo ModuloEstoque).
