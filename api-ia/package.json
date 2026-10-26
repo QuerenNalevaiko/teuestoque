@@ -1,0 +1,21 @@
+{
+  "name": "teu-estoque-api-ia",
+  "version": "1.0.0",
+  "private": true,
+  "description": "API de assistente de análise de estoque para o Teu Estoque",
+  "main": "servidor.js",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node servidor.js",
+    "dev": "node --watch servidor.js"
+  },
+  "dependencies": {
+    "@google/genai": "^2.31.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0"
+  }
+}
